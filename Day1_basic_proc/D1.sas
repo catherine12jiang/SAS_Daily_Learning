@@ -96,6 +96,40 @@ run;
 
 
 
+/* formatting data values in results */
+proc print data=input-table;
+	format col-name(s) format;
+	* char -- $ format-name.
+	num -- format-name w.d(w is total width including decimal and special 
+	characters, . is required delimiter, d is number of decimal places)
+	date -- format-name date7. (e.g. 21199=>15JAN18). there are various date formats ;
+run;
+
+
+/* sorting data */
+proc sort data=input-table out=output-table;
+	by descending(defalut is ascending) col-name(s);
+run;
+* proc sort doesn't generate printed output, need to open/print sorted table - data from out statement;
+
+
+/* identifying and removing duplicates */
+* noduprecs remove adacent rows that are entirely duplicated.;
+proc sort data=input-table out=output-table
+	noduprecs dupout=output-table;
+	* sort by all cols;
+	by _all_;
+run;
+
+* nodupkey keeps only 1st occurence of each unique value from "col-name";
+* for example: Judy can only occur once;
+* if the next row still contains Judy, then this is a duplicated row.;
+proc sort data=input-table out=output-table
+	nodupkey dupout=output-table;
+	by col-name(s);
+run;
+
+
 
 
 
